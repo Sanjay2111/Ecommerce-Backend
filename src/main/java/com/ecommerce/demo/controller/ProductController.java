@@ -8,6 +8,7 @@ import com.ecommerce.demo.service.ProductService;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/products")
 public class ProductController {

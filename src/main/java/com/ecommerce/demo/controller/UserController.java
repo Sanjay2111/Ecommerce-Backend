@@ -9,6 +9,7 @@ import com.ecommerce.demo.model.User;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -68,5 +69,25 @@ public class UserController {
     public ResponseEntity<Void> changePassword(@PathVariable String id, @RequestParam String newPassword) {
         userService.changePassword(id, newPassword);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
+        // Retrieve the user from the backend based on the provided username
+        User existingUser = userService.getUserByUsername(user.getUserName());
+
+        // Check if the user exists and if the password matches
+        if (existingUser != null) {
+            if (existingUser.getPassword().equals(user.getPassword())) {
+                // Login successful
+                return new ResponseEntity<>(existingUser, HttpStatus.OK);
+            } else {
+                // Invalid password
+                return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+            }
+        } else {
+            // User not found
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
     }
 }
