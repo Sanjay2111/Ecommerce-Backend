@@ -6,14 +6,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.ecommerce.demo.service.UserService;
 import com.ecommerce.demo.model.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
+
+import javax.crypto.spec.SecretKeySpec;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.security.Key;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
+    private final String SECRET_KEY = "your-secret-key"; // Replace with your own secret key
 
     @Autowired
     public UserController(UserService userService) {
@@ -70,24 +86,74 @@ public class UserController {
         userService.changePassword(id, newPassword);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody User user) {
-        // Retrieve the user from the backend based on the provided username
+
+   @PostMapping("/login")
+public ResponseEntity<Map<String, String>> loginUser(@RequestBody User user, HttpServletResponse response) {
+    try {
         User existingUser = userService.getUserByUsername(user.getUserName());
 
-        // Check if the user exists and if the password matches
         if (existingUser != null) {
             if (existingUser.getPassword().equals(user.getPassword())) {
+                // Generate JWT token
+                String token = generateToken(existingUser.getUserName());
+
+                // Add the token to the response headers
+                response.addHeader("Authorization", "Bearer " + token);
+
+                // Create the response body
+                Map<String, String> responseBody = new HashMap<>();
+                responseBody.put("username", existingUser.getUserName());
+                responseBody.put("authorization", "Bearer " + token);
+
                 // Login successful
-                return new ResponseEntity<>(existingUser, HttpStatus.OK);
+                return ResponseEntity.ok(responseBody);
             } else {
                 // Invalid password
-                return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Collections.singletonMap("error", "Invalid password"));
             }
         } else {
             // User not found
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("error", "User not found"));
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Collections.singletonMap("error", "Internal Server Error"));
     }
+}
+
+
+
+    private String generateToken(String username) {
+    try {
+        // Set token expiration time (e.g., 1 hour)
+        long expirationTime = 3600000; // 1 hour in milliseconds
+
+        // Generate a secure signing key
+        Key signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+        // Set JWT claims
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", username);
+
+        // Build JWT
+        JwtBuilder builder = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(signingKey);
+
+        // Generate token
+        String token = builder.compact();
+
+        // Print token for debugging
+        System.out.println("Generated token: " + token);
+
+        return token;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+    }
+}
 }
