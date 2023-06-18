@@ -1,5 +1,8 @@
 package com.ecommerce.demo.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,21 +11,15 @@ public class Cart {
     @Id
     private String id;
     private String userId; 
-    private String productId;
-    private int quantity;
-    private double price;
-    private String productName;
-    private String url;
+    private List<CartItem> cartItems; // Collection of cart items
 
-    public Cart(String userId, String productId, String productName, int quantity, double price , String url) {
+    public Cart(String userId) {
         this.userId = userId;
-        this.productId = productId;
-        this.productName = productName;
-        this.quantity = quantity;
-        this.price = price;
-        this.url = url;
+        this.cartItems = new ArrayList<>();
     }
-    
+
+    // Getters and setters
+
     public String getId() {
         return id;
     }
@@ -39,42 +36,18 @@ public class Cart {
         this.userId = userId;
     }
 
-    public String getProductId() {
-        return productId;
+    public List<CartItem> getCartItems() {
+        return cartItems;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
     }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-    
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-     public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public int getTotalItems() {
+        int totalItems = 0;
+        for (CartItem cartItem : cartItems) {
+            totalItems += cartItem.getQuantity();
+        }
+        return totalItems;
     }
 }
