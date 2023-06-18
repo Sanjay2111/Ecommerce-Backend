@@ -16,6 +16,7 @@ import com.ecommerce.demo.model.Product;
 import com.ecommerce.demo.service.CartService;
 import com.ecommerce.demo.service.ProductService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/carts")
 public class CartController {
@@ -40,7 +41,7 @@ public class CartController {
         }
     }
 
-    @GetMapping("/{userId}")
+     @GetMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> viewCart(@PathVariable String userId) {
     Optional<Cart> optionalCart = cartService.getCartByUserId(userId);
 
@@ -124,16 +125,17 @@ public ResponseEntity<Cart> addToCart(@PathVariable String userId, @RequestBody 
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCart(@PathVariable String id) {
-        Optional<Cart> existingCart = cartService.getCartById(id);
-        if (existingCart.isPresent()) {
-            cartService.deleteCart(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteCartByUserId(@PathVariable String userId) {
+    Optional<Cart> existingCart = cartService.getCartByUserId(userId);
+    if (existingCart.isPresent()) {
+        cartService.deleteCartByUserId(userId);
+        return ResponseEntity.noContent().build();
+    } else {
+        return ResponseEntity.notFound().build();
     }
+}
+
 
     @DeleteMapping("/{userId}/{productId}")
     public ResponseEntity<Void> deleteCartItem(@PathVariable String userId, @PathVariable String productId) {

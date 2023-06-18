@@ -1,21 +1,14 @@
 package com.ecommerce.demo.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.ecommerce.demo.service.UserService;
 import com.ecommerce.demo.model.User;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-
-
-import javax.crypto.spec.SecretKeySpec;
-
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Collections;
@@ -29,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
-    private final String SECRET_KEY = "your-secret-key"; // Replace with your own secret key
+    private final String SECRET_KEY = "ww-xcxnbs-12211"; // Replace with your own secret key
 
     @Autowired
     public UserController(UserService userService) {
@@ -104,6 +97,7 @@ public ResponseEntity<Map<String, String>> loginUser(@RequestBody User user, Htt
                 Map<String, String> responseBody = new HashMap<>();
                 responseBody.put("username", existingUser.getUserName());
                 responseBody.put("authorization", "Bearer " + token);
+                responseBody.put("userId",existingUser.getId());
 
                 // Login successful
                 return ResponseEntity.ok(responseBody);

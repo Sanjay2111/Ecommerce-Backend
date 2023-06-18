@@ -1,4 +1,5 @@
 package com.ecommerce.demo.service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +38,12 @@ public class CartService {
     public void deleteCart(String id) {
         cartRepository.deleteById(id);
     }
+    
     public Optional<Cart> getCartByUserId(String userId) {
-    return cartRepository.findByUserId(userId);
-}
-
+        return cartRepository.findByUserId(userId);
+    }
+    
+    public void deleteCartByUserId(String userId) {
+        cartRepository.deleteByUserId(userId);
+    }
 }
