@@ -41,8 +41,8 @@ public class CartController {
         }
     }
 
-     @GetMapping("/{userId}")
-    public ResponseEntity<Map<String, Object>> viewCart(@PathVariable String userId) {
+    @GetMapping("/{userId}")
+public ResponseEntity<Map<String, Object>> viewCart(@PathVariable String userId) {
     Optional<Cart> optionalCart = cartService.getCartByUserId(userId);
 
     if (optionalCart.isPresent()) {
@@ -51,6 +51,7 @@ public class CartController {
         List<CartItem> cartItems = userCart.getCartItems();
         
         Map<String, Object> response = new HashMap<>();
+        response.put("cartId", userCart.getId()); // Include the cart ID in the response
         response.put("totalItems", totalItems);
         response.put("items", cartItems);
 
@@ -59,6 +60,7 @@ public class CartController {
         return ResponseEntity.notFound().build();
     }
 }
+
 
 @PostMapping("/{userId}")
 public ResponseEntity<Cart> addToCart(@PathVariable String userId, @RequestBody CartItem cartItem) {
@@ -113,6 +115,7 @@ public ResponseEntity<Cart> addToCart(@PathVariable String userId, @RequestBody 
 }
 
 
+
     @PutMapping("/{id}")
     public ResponseEntity<Cart> updateCart(@PathVariable String id, @RequestBody Cart cart) {
         Optional<Cart> existingCart = cartService.getCartById(id);
@@ -125,16 +128,16 @@ public ResponseEntity<Cart> addToCart(@PathVariable String userId, @RequestBody 
         }
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteCartByUserId(@PathVariable String userId) {
-    Optional<Cart> existingCart = cartService.getCartByUserId(userId);
-    if (existingCart.isPresent()) {
-        cartService.deleteCartByUserId(userId);
-        return ResponseEntity.noContent().build();
-    } else {
-        return ResponseEntity.notFound().build();
-    }
-}
+//     @DeleteMapping("/{userId}")
+//     public ResponseEntity<Void> deleteCartByUserId(@PathVariable String userId) {
+//     Optional<Cart> existingCart = cartService.getCartByUserId(userId);
+//     if (existingCart.isPresent()) {
+//         cartService.deleteCartByUserId(userId);
+//         return ResponseEntity.noContent().build();
+//     } else {
+//         return ResponseEntity.notFound().build();
+//     }
+// }
 
 
     @DeleteMapping("/{userId}/{productId}")
@@ -167,4 +170,15 @@ public ResponseEntity<Cart> addToCart(@PathVariable String userId, @RequestBody 
             return ResponseEntity.notFound().build();
         }
     }
+    @DeleteMapping("/{id}")
+public ResponseEntity<Void> deleteCart(@PathVariable String id) {
+    boolean deleted = cartService.deleteCart(id);
+    if (deleted) {
+        return ResponseEntity.noContent().build();
+    } else {
+        return ResponseEntity.notFound().build();
+    }
+}
+
+    
 }

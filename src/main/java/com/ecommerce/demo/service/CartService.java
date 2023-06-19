@@ -35,9 +35,16 @@ public class CartService {
         return cartRepository.save(cart);
     }
     
-    public void deleteCart(String id) {
+    public boolean deleteCart(String id) {
+    Optional<Cart> cartOptional = cartRepository.findById(id);
+    if (cartOptional.isPresent()) {
         cartRepository.deleteById(id);
+        return true; // Deletion successful
+    } else {
+        return false; // Cart not found
     }
+}
+
     
     public Optional<Cart> getCartByUserId(String userId) {
         return cartRepository.findByUserId(userId);
@@ -46,4 +53,6 @@ public class CartService {
     public void deleteCartByUserId(String userId) {
         cartRepository.deleteByUserId(userId);
     }
+
+    
 }
