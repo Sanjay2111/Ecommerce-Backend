@@ -128,17 +128,6 @@ public ResponseEntity<Cart> addToCart(@PathVariable String userId, @RequestBody 
         }
     }
 
-//     @DeleteMapping("/{userId}")
-//     public ResponseEntity<Void> deleteCartByUserId(@PathVariable String userId) {
-//     Optional<Cart> existingCart = cartService.getCartByUserId(userId);
-//     if (existingCart.isPresent()) {
-//         cartService.deleteCartByUserId(userId);
-//         return ResponseEntity.noContent().build();
-//     } else {
-//         return ResponseEntity.notFound().build();
-//     }
-// }
-
 
     @DeleteMapping("/{userId}/{productId}")
     public ResponseEntity<Void> deleteCartItem(@PathVariable String userId, @PathVariable String productId) {
