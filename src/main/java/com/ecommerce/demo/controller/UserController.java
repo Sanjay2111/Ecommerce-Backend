@@ -22,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
-    private final String SECRET_KEY = "ww-xcxnbs-12211"; // Replace with your own secret key
+    private final String SECRET_KEY = "ww-xcxnbs-12211"; 
 
     @Autowired
     public UserController(UserService userService) {
@@ -97,7 +97,8 @@ public ResponseEntity<Map<String, String>> loginUser(@RequestBody User user, Htt
                 Map<String, String> responseBody = new HashMap<>();
                 responseBody.put("username", existingUser.getUserName());
                 responseBody.put("authorization", "Bearer " + token);
-                responseBody.put("userId",existingUser.getId());
+                responseBody.put("userId", existingUser.getId());
+                responseBody.put("role", existingUser.getRole()); // Add the role information
 
                 // Login successful
                 return ResponseEntity.ok(responseBody);
